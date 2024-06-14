@@ -28,7 +28,7 @@ h1 {
 .section h2 {
   margin-top: 0px;
   margin-bottom: 10px;
-  color: #bbbbbb;
+  color: #e7e6e6;
 }
 
 .inputGroup {
@@ -48,6 +48,7 @@ h1 {
 .button {
   padding: 10px 15px;
   background-color: #007bff;
+  justify-content: center;
   color: white;
   border: none;
   border-radius: 5px;

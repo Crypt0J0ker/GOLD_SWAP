@@ -83,11 +83,12 @@ p {
 }
 
 input {
-  background-color: #232544 !important;
+  background-color: #323771 !important;
 }
 
 .balance-text {
   display: flex;
+
   margin-left: auto;
 }
 
