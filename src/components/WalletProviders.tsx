@@ -17,6 +17,46 @@ export const DiscoverWalletProviders = ({
         method: 'eth_requestAccounts',
       })
 
+      const polygonChainId = '0x89'
+
+      const currentChainId = await providerWithInfo.provider.request({
+        method: 'eth_chainId',
+      })
+
+      if (currentChainId !== polygonChainId) {
+        try {
+          await providerWithInfo.provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: polygonChainId }],
+          })
+        } catch (switchError) {
+          if (switchError.code === 4902) {
+            try {
+              await providerWithInfo.provider.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: polygonChainId,
+                    chainName: 'Polygon Mainnet',
+                    nativeCurrency: {
+                      name: 'MATIC',
+                      symbol: 'MATIC',
+                      decimals: 18,
+                    },
+                    rpcUrls: ['https://polygon-rpc.com/'],
+                    blockExplorerUrls: ['https://polygonscan.com/'],
+                  },
+                ],
+              })
+            } catch (addError) {
+              console.error(addError)
+            }
+          } else {
+            console.error(switchError)
+          }
+        }
+      }
+
       setSelectedWallet(providerWithInfo)
       setUserAccount(accounts?.[0])
     } catch (error) {
