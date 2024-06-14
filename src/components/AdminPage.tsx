@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import styles from './AdminPage.module.css'
+import GoldABI from '../abi/GoldABI.json'
 
 const AdminPage = ({ selectedWallet, userAccount }) => {
   const [tokenAddress, setTokenAddress] = useState('')
@@ -9,6 +10,16 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
   const [buyTax, setBuyTax] = useState('')
   const [recoverTokenAddress, setRecoverTokenAddress] = useState('')
   const [recoverTokenAmount, setRecoverTokenAmount] = useState('')
+
+  const provider = new ethers.JsonRpcProvider(
+    'https://polygon-mainnet.g.alchemy.com/v2/pmUZRjDjzs7tWIVU8AbhC4EHL7Im-WcO'
+  )
+  console.log('provider', provider)
+  const contract = new ethers.Contract(
+    '0x68Cd469503384EA977809d898eFae5423C78Dfa2',
+    GoldABI,
+    provider
+  )
 
   const handleAddWhitelistedToken = async () => {
     try {
