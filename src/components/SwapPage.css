@@ -1,4 +1,5 @@
 .swap-container {
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,7 +70,8 @@ p {
 
 .swap-title {
   margin: 20px;
-  font-size: 30px;
+  padding-right: 60px;
+  font-size: 50px;
   font-weight: bold;
   background: linear-gradient(to right, #ffd700, #ff4500);
   -webkit-background-clip: text;

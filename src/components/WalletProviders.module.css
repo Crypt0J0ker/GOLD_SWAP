@@ -1,7 +1,28 @@
+header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgb(64, 75, 80);
+}
+
+.text__white {
+  font-size: 30px;
+  padding-left: 6rem;
+  margin-top: 40px;
+}
+
+.meta__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .meta__button {
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
-  margin-right: 100px;
+  margin-right: 120px;
 }
 
 .logo {

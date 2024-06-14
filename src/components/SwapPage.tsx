@@ -180,7 +180,6 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
 
   return (
     <div className="swap-container">
-      <h2 className="swap-title">Swap {toToken}</h2>
       <p className="swap-note">Note: 5% will be deducted as a buy tax.</p>
       <div className="swap-box">
         <div className="swap-section">

@@ -1,22 +1,44 @@
-import './App.css'
+import React, { useState } from 'react'
 import { DiscoverWalletProviders } from './components/WalletProviders'
 import SwapPage from './components/SwapPage'
-import { useState } from 'react'
+import AdminPage from './components/AdminPage'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
-  const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>()
-  const [userAccount, setUserAccount] = useState<string>('')
+  const [selectedWallet, setSelectedWallet] = useState(null)
+  const [userAccount, setUserAccount] = useState('')
 
   return (
-    <div className="App">
-      <DiscoverWalletProviders
-        selectedWallet={selectedWallet}
-        setSelectedWallet={setSelectedWallet}
-        userAccount={userAccount}
-        setUserAccount={setUserAccount}
-      />
-      <SwapPage selectedWallet={selectedWallet} userAccount={userAccount} />
-    </div>
+    <Router>
+      <div className="App">
+        <DiscoverWalletProviders
+          selectedWallet={selectedWallet}
+          setSelectedWallet={setSelectedWallet}
+          userAccount={userAccount}
+          setUserAccount={setUserAccount}
+        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <SwapPage
+                selectedWallet={selectedWallet}
+                userAccount={userAccount}
+              />
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminPage
+                selectedWallet={selectedWallet}
+                userAccount={userAccount}
+              />
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 

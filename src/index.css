@@ -1,6 +1,5 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
@@ -16,7 +15,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #8388f9;
   text-decoration: inherit;
 }
 a:hover {
@@ -58,7 +57,7 @@ button {
 
   transition: border-color 0.25s;
   border: 1px solid transparent;
-  background-color: #373737;
+  background-color: #424d62;
   border-color: #232544;
 }
 button > img {

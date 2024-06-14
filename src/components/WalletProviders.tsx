@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useSyncProviders } from '../hooks/useSyncProviders'
 import { formatAddress } from '~/utils'
 import styles from './WalletProviders.module.css'
@@ -24,7 +25,16 @@ export const DiscoverWalletProviders = ({
   }
 
   return (
-    <>
+    <header>
+      <div className={styles.meta__header}>
+        <Link to="/">
+          <h2 className={styles.text__white}>MAIN</h2>
+        </Link>
+        <Link to="/admin">
+          <h2 className={styles.text__white}>ADMIN</h2>
+        </Link>
+      </div>
+      <h1 className="swap-title">Swap GOLD</h1>
       <div className={styles.meta__button}>
         {providers.length > 0 ? (
           providers?.map((provider: EIP6963ProviderDetail) => (
@@ -52,6 +62,6 @@ export const DiscoverWalletProviders = ({
           <div>No Announced Wallet Providers</div>
         )}
       </div>
-    </>
+    </header>
   )
 }
