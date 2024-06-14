@@ -16,16 +16,48 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
   const [buyTax, setBuyTax] = useState('')
   const [recoverTokenAddress, setRecoverTokenAddress] = useState('')
   const [recoverTokenAmount, setRecoverTokenAmount] = useState('')
+  const [admin, setAdmin] = useState('')
+  const [rate, setRate] = useState(0)
 
   const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), [RPC_URL])
 
-  // Создаем контракт с провайдером для чтения данных
   const contract = useMemo(
     () => new ethers.Contract(GOLD_Address, GoldABI, provider),
     [provider]
   )
 
-  // Функция для получения signer из выбранного кошелька
+  useEffect(() => {
+    const admin = async () => {
+      try {
+        const result = await contract.owner()
+        setAdmin(result)
+      } catch (error) {
+        console.error('Error getting admin:', error)
+      }
+    }
+    const handleUpdateBuyTax = async () => {
+      try {
+        const ratio = await contract.buyTax()
+        setRate(Number(ratio))
+        console.log(ratio)
+      } catch (error) {
+        console.error('Error getting ratio:', error)
+      }
+    }
+
+    admin()
+    handleUpdateBuyTax()
+  }, [selectedWallet, userAccount, contract])
+
+  const handleUpdateBuyTax = async () => {
+    try {
+      const rate = await contract.buyTax()
+      setRate(Number(rate))
+    } catch (error) {
+      console.error('Error getting ratio:', error)
+    }
+  }
+
   const getSignerContract = async () => {
     const web3Provider = new ethers.BrowserProvider(selectedWallet.provider)
     const signer = await web3Provider.getSigner()
@@ -92,8 +124,9 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
       const signerContract = await getSignerContract()
       const tx = await signerContract.setBuyTax(buyTax)
       await tx.wait()
-      alert('Buy tax set')
       setBuyTax('')
+      handleUpdateBuyTax()
+      alert('Buy tax set')
     } catch (error) {
       setBuyTax('')
       console.error(error)
@@ -147,7 +180,7 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
 
         <div className={styles.section}>
           <h2>Remove Whitelisted Token</h2>
-          <div className={styles.inputGroup}>
+          <div className={styles.inputGroup} style={{ marginBottom: '58px' }}>
             <input
               type="text"
               placeholder="Token Address"
@@ -188,8 +221,11 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
         </div>
 
         <div className={styles.section}>
-          <h2>Set Buy Tax</h2>
-          <div className={styles.inputGroup}>
+          <div className={styles.tax}>
+            <h2>Set Buy Tax</h2>
+            <p>Current tax: {rate}</p>
+          </div>
+          <div className={styles.inputGroup} style={{ marginBottom: '58px' }}>
             <input
               type="text"
               placeholder="New Buy Tax"
@@ -222,6 +258,14 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
             Recover Tokens
           </button>
         </div>
+        {admin.toLowerCase() !== userAccount.toLowerCase() && (
+          <div className={styles.attention}>
+            <p>
+              Attention: You will not be able to modify the smart contract
+              because you are not an admin!
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

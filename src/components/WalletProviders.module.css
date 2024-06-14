@@ -4,12 +4,13 @@ header {
   align-items: center;
   justify-content: space-between;
   background-color: rgb(64, 75, 80);
+  height: 90px;
 }
 
 .text__white {
-  font-size: 30px;
+  font-size: 27px;
   padding-left: 6rem;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .meta__header {
