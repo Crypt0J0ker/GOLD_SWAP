@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSyncProviders } from '../hooks/useSyncProviders'
 import { formatAddress } from '~/utils'
 import styles from './WalletProviders.module.css'
+import { useState } from 'react'
 
 export const DiscoverWalletProviders = ({
   selectedWallet,
@@ -10,6 +11,7 @@ export const DiscoverWalletProviders = ({
   setUserAccount,
 }) => {
   const providers = useSyncProviders()
+  const [isConnected, setIsConnected] = useState(false)
 
   const handleConnect = async (providerWithInfo: EIP6963ProviderDetail) => {
     try {
@@ -59,6 +61,7 @@ export const DiscoverWalletProviders = ({
 
       setSelectedWallet(providerWithInfo)
       setUserAccount(accounts?.[0])
+      setIsConnected(true)
     } catch (error) {
       console.error(error)
     }
@@ -75,31 +78,40 @@ export const DiscoverWalletProviders = ({
         </Link>
       </div>
       <h1 className="swap-title">Swap GOLD</h1>
-      <div className={styles.meta__button}>
-        {providers.length > 0 ? (
-          providers?.map((provider: EIP6963ProviderDetail) => (
-            <button
-              key={provider.info.uuid}
-              onClick={() => handleConnect(provider)}
-            >
-              {userAccount ? (
-                <>
-                  <img
-                    src={selectedWallet.info.icon}
-                    alt={selectedWallet.info.name}
-                  />
-                  <div>({formatAddress(userAccount)})</div>
-                </>
-              ) : (
-                <>
-                  <img src={provider.info.icon} alt={provider.info.name} />
-                  <div>{provider.info.name}</div>
-                </>
-              )}
-            </button>
-          ))
-        ) : (
-          <div>No Announced Wallet Providers</div>
+      <div className={styles.meta__subtitle}>
+        <div className={styles.meta__button}>
+          {providers.length > 0 ? (
+            providers?.map((provider: EIP6963ProviderDetail) => (
+              <button
+                key={provider.info.uuid}
+                onClick={() => handleConnect(provider)}
+              >
+                {userAccount ? (
+                  <>
+                    <img
+                      src={selectedWallet.info.icon}
+                      alt={selectedWallet.info.name}
+                    />
+                    <div>({formatAddress(userAccount)})</div>
+                  </>
+                ) : (
+                  <>
+                    <img src={provider.info.icon} alt={provider.info.name} />
+                    <div>{provider.info.name}</div>
+                  </>
+                )}
+              </button>
+            ))
+          ) : (
+            <div>No Announced Wallet Providers</div>
+          )}
+        </div>
+        {isConnected && (
+          <img
+            className={styles.meta__icon}
+            src="../../public/polygon-matic-logo.svg"
+            alt="matic"
+          />
         )}
       </div>
     </header>

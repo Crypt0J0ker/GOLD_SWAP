@@ -23,7 +23,7 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  margin-right: 120px;
+  margin-right: auto;
 }
 
 .logo {
@@ -55,4 +55,18 @@ header {
   align-content: center;
 
   padding: 0.6em 1.2em;
+}
+
+.meta__icon {
+  height: 2.5em;
+  width: 2.5em;
+  padding-top: 10px;
+  margin-right: 100px;
+}
+
+.meta__subtitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 350px;
 }
