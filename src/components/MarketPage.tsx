@@ -11,7 +11,7 @@ interface SwapPageProps {
 const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
   const [fromToken, setFromToken] = useState('USDT')
   const [toToken, setToToken] = useState('SWORD')
-  const [amount, setAmount] = useState('0') // хранение как строка
+  const [amount, setAmount] = useState('0')
   const [amountInWei, setAmountInWei] = useState(BigInt(0))
   const [balance, setBalance] = useState(BigInt(0))
   const [amountOut, setAmountOut] = useState('0')
@@ -22,10 +22,16 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
   const SWORD_Address = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
   const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tokenAddresses = {
     USDT: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     USDC: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
   }
+
+  const erc20Abi = [
+    'function approve(address spender, uint256 amount) external returns (bool)',
+    'function allowance(address owner, address spender) view returns (uint256)',
+  ]
 
   const RPC_URL =
     'https://polygon-mainnet.g.alchemy.com/v2/pmUZRjDjzs7tWIVU8AbhC4EHL7Im-WcO'
@@ -146,26 +152,41 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
       let signerContract, tx
       const web3Provider = new ethers.BrowserProvider(selectedWallet.provider)
       const signer = await web3Provider.getSigner()
-      const amountInUnits = amountInWei.toString()
 
       if (fromToken === 'MATIC') {
         tx = await signer.sendTransaction({
           to: toToken === 'SWORD' ? SWORD_Address : ROCK_Address,
-          value: amountInUnits,
+          value: amountInWei.toString(),
         })
       } else {
-        const amountInWei = ethers.parseUnits(amount.toString(), 6)
-        console.log('fromToken', fromToken)
-        console.log('toToken', toToken)
-        console.log('amountInWei', amountInWei.toString())
-
         signerContract =
           toToken === 'SWORD'
             ? await getSwordContract()
             : await getRockContract()
-        tx = await signerContract[`mintWith${fromToken}`]({
-          value: amountInUnits,
-        })
+
+        const stableCoinAddress =
+          fromToken === 'USDT' ? tokenAddresses.USDT : tokenAddresses.USDC
+        const stableCoinContract = new ethers.Contract(
+          stableCoinAddress,
+          erc20Abi,
+          signer
+        )
+
+        const approveTx = await stableCoinContract.approve(
+          signerContract.target,
+          amountInWei
+        )
+        await approveTx.wait()
+
+        const allowance = BigInt(
+          await stableCoinContract.allowance(userAccount, signerContract.target)
+        )
+        if (allowance < amountInWei) {
+          throw new Error('Insufficient allowance')
+        }
+
+        const mintFunction = `mintWith${fromToken}`
+        tx = await signerContract[mintFunction](amountInWei.toString())
       }
 
       await tx.wait()
