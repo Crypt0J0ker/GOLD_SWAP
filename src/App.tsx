@@ -3,6 +3,7 @@ import { DiscoverWalletProviders } from './components/WalletProviders'
 import SwapPage from './components/SwapPage'
 import AdminPage from './components/AdminPage'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import MarketPage from './components/MarketPage'
 
 function App() {
   const [selectedWallet, setSelectedWallet] = useState(null)
@@ -22,6 +23,15 @@ function App() {
             path="/"
             element={
               <SwapPage
+                selectedWallet={selectedWallet}
+                userAccount={userAccount}
+              />
+            }
+          />
+          <Route
+            path="/market"
+            element={
+              <MarketPage
                 selectedWallet={selectedWallet}
                 userAccount={userAccount}
               />

@@ -73,6 +73,9 @@ export const DiscoverWalletProviders = ({
         <Link to="/">
           <h2 className={styles.text__white}>MAIN</h2>
         </Link>
+        <Link to="/market">
+          <h2 className={styles.text__white}>MARKET</h2>
+        </Link>
         <Link to="/admin">
           <h2 className={styles.text__white}>ADMIN</h2>
         </Link>
