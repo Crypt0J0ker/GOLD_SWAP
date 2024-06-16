@@ -225,9 +225,9 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
           Swap
         </button>
       </div>
-      <p>GOLD address: {GOLD_Address}</p>
-      <p>ROCK address: {ROCK_Address}</p>
-      <p>SWORD address: {SWORD_Address}</p>
+      <p>GOLD: {GOLD_Address}</p>
+      <p>ROCK: {ROCK_Address}</p>
+      <p>SWORD: {SWORD_Address}</p>
     </div>
   )
 }

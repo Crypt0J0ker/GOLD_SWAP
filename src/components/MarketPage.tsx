@@ -245,6 +245,8 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
           Ensure you have enough balance to complete the purchase.
         </p>
       </div>
+      <p>ROCK: {ROCK_Address}</p>
+      <p>SWORD: {SWORD_Address}</p>
     </div>
   )
 }
