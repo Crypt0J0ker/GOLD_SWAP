@@ -5,12 +5,8 @@ header {
   justify-content: space-between;
   background-color: rgb(64, 75, 80);
   height: 90px;
-}
-
-.text__white {
-  font-size: 18px;
-  padding-left: 3.7rem;
-  margin-top: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #181937;
 }
 
 .meta__header {
@@ -69,4 +65,12 @@ header {
   flex-direction: row;
   justify-content: space-between;
   width: 350px;
+}
+
+a:active {
+  color: #282a62;
+}
+
+.active {
+  color: #3b3e91;
 }

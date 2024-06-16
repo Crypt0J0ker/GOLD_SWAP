@@ -17,7 +17,13 @@ a {
   font-weight: 500;
   color: #c2c2d0;
   text-decoration: inherit;
+  font-size: 18px;
+  padding-left: 3.7rem;
+  margin-top: 8px;
+  text-shadow: -1px -1px 0 #232544, 1px -1px 0 #232544, -1px 1px 0 #232544,
+    1px 1px 0 #232544;
 }
+
 a:hover {
   color: #535bf2;
 }

@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { useSyncProviders } from '../hooks/useSyncProviders'
 import { formatAddress } from '~/utils'
 import styles from './WalletProviders.module.css'
-import { useState } from 'react'
 
 export const DiscoverWalletProviders = ({
   selectedWallet,
@@ -13,7 +13,7 @@ export const DiscoverWalletProviders = ({
   const providers = useSyncProviders()
   const [isConnected, setIsConnected] = useState(false)
 
-  const handleConnect = async (providerWithInfo: EIP6963ProviderDetail) => {
+  const handleConnect = async providerWithInfo => {
     try {
       const accounts = await providerWithInfo.provider.request({
         method: 'eth_requestAccounts',
@@ -70,21 +70,30 @@ export const DiscoverWalletProviders = ({
   return (
     <header>
       <div className={styles.meta__header}>
-        <Link to="/">
-          <h2 className={styles.text__white}>MAIN</h2>
-        </Link>
-        <Link to="/market">
-          <h2 className={styles.text__white}>MARKET</h2>
-        </Link>
-        <Link to="/admin">
-          <h2 className={styles.text__white}>ADMIN</h2>
-        </Link>
+        <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? styles.active : '')}
+        >
+          <h2>MAIN</h2>
+        </NavLink>
+        <NavLink
+          to="/market"
+          className={({ isActive }) => (isActive ? styles.active : '')}
+        >
+          <h2>MARKET</h2>
+        </NavLink>
+        <NavLink
+          to="/admin"
+          className={({ isActive }) => (isActive ? styles.active : '')}
+        >
+          <h2>ADMIN</h2>
+        </NavLink>
       </div>
       <h1 className="swap-title">Swap GOLD</h1>
       <div className={styles.meta__subtitle}>
         <div className={styles.meta__button}>
           {providers.length > 0 ? (
-            providers?.map((provider: EIP6963ProviderDetail) => (
+            providers?.map(provider => (
               <button
                 key={provider.info.uuid}
                 onClick={() => handleConnect(provider)}

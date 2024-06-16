@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import Confetti from 'react-confetti'
 import { ethers } from 'ethers'
 import './SwapPage.css'
 import TokenABI from '../abi/TokenABI.json'
@@ -15,6 +16,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
   const [amountInWei, setAmountInWei] = useState(BigInt(0))
   const [balance, setBalance] = useState(BigInt(0))
   const [amountOut, setAmountOut] = useState('0')
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const STABLE_DECIMALS = 6
   const MATIC_DECIMALS = 18
@@ -190,7 +192,10 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
       }
 
       await tx.wait()
-      alert(`Swapped ${amount} ${fromToken} for ${toToken}`)
+      setShowConfetti(true)
+      setTimeout(() => {
+        setShowConfetti(false)
+      }, 5000)
     } catch (error) {
       console.error(error)
       alert('An error occurred during the swap.')
@@ -247,6 +252,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
       </div>
       <p>ROCK: {ROCK_Address}</p>
       <p>SWORD: {SWORD_Address}</p>
+      {showConfetti && <Confetti />}
     </div>
   )
 }
