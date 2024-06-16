@@ -112,7 +112,7 @@ export const DiscoverWalletProviders = ({
         {isConnected && (
           <img
             className={styles.meta__icon}
-            src="../../public/polygon-matic-logo.svg"
+            src="/polygon-matic-logo.svg"
             alt="matic"
           />
         )}
