@@ -4,8 +4,8 @@ import { ethers } from 'ethers'
 import { formatBalance } from '~/utils'
 
 const GOLD_Address = '0x68Cd469503384EA977809d898eFae5423C78Dfa2'
-const ROCK_Address = '0x2631c94d2461089DBbaC37253354073586a11D2F'
-const SWORD_Address = '0x8de5c8752ae8ee1dd1d461d904fe8383749871cb'
+const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
+const SWORD_Address = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
 
 const SwapPage = ({ selectedWallet, userAccount }) => {
   const RPC_URL =
