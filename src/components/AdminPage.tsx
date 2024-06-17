@@ -70,7 +70,7 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
       const signerContract = await getSignerContract()
       const tx = await signerContract.addWhitelistedToken(
         tokenAddress,
-        ethers.parseUnits(tokenRate, 18)
+        tokenRate
       )
       await tx.wait()
       setTokenAddress('')
@@ -104,7 +104,7 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
       const signerContract = await getSignerContract()
       const tx = await signerContract.updateWhitelistedTokenRate(
         updateTokenAddress,
-        ethers.parseUnits(newTokenRate, 18)
+        newTokenRate
       )
       await tx.wait()
       setNewTokenRate('')
