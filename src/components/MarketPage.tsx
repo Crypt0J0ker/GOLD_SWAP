@@ -196,6 +196,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
       setTimeout(() => {
         setShowConfetti(false)
       }, 5000)
+      alert(`It was done! Swapped ${amount} ${fromToken} for ${toToken}`)
     } catch (error) {
       console.error(error)
       alert('An error occurred during the swap.')
