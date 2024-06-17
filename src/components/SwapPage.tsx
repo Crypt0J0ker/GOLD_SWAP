@@ -180,6 +180,10 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
 
   return (
     <div className="swap-container">
+      <p className="swap-note">
+        Here you can exchange Rock tokens for Gold tokens at a ratio of 100 / 1
+        and SWORD tokens for Gold tokens at a ratio of 1 / 100.
+      </p>
       <p className="swap-note">Note: 5% will be deducted as a buy tax.</p>
       <div className="swap-box">
         <div className="swap-section">

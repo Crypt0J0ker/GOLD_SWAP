@@ -205,6 +205,10 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
 
   return (
     <div className="swap-container">
+      <p className="swap-note">
+        Here you can acquire ROCK tokens and SWARD tokens without any
+        commission.
+      </p>
       <div className="swap-box">
         <div className="swap-section">
           <label htmlFor="fromToken">From</label>
