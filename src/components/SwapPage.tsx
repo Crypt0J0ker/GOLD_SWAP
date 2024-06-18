@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import './SwapPage.css'
 import { ethers } from 'ethers'
 import { formatBalance } from '~/utils'
+import DollarRain from './DollarRain'
 
 const GOLD_Address = '0x68Cd469503384EA977809d898eFae5423C78Dfa2'
 const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
@@ -17,6 +18,8 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
   const [rate, setRate] = useState(0)
   const toToken = 'GOLD'
   const buyTax = 5 // 5% tax
+
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), [RPC_URL])
 
@@ -146,6 +149,10 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
 
       getUserTokenBalance()
       getUserGoldBalance()
+      setShowConfetti(true)
+      setTimeout(() => {
+        setShowConfetti(false)
+      }, 5000)
       console.log('Transaction successful:', tx)
     } catch (error) {
       console.error('Error swapping tokens:', error)
@@ -232,6 +239,7 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
       <p>GOLD: {GOLD_Address}</p>
       <p>ROCK: {ROCK_Address}</p>
       <p>SWORD: {SWORD_Address}</p>
+      {showConfetti && <DollarRain />}
     </div>
   )
 }

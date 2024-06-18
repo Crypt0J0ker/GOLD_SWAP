@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import Confetti from 'react-confetti'
 import { ethers } from 'ethers'
 import './SwapPage.css'
 import TokenABI from '../abi/TokenABI.json'
+import DollarRain from './DollarRain'
 
 interface SwapPageProps {
   selectedWallet: EIP6963ProviderDetail
@@ -257,7 +257,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
       </div>
       <p>ROCK: {ROCK_Address}</p>
       <p>SWORD: {SWORD_Address}</p>
-      {showConfetti && <Confetti />}
+      {showConfetti && <DollarRain />}
     </div>
   )
 }
