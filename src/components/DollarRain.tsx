@@ -38,7 +38,7 @@ const DollarRain = () => {
                 height: 100,
               },
               {
-                src: '/coin.png',
+                src: '/dollar.png',
                 width: 50,
                 height: 50,
               },

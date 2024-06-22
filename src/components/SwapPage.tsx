@@ -9,8 +9,7 @@ const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
 const SWORD_Address = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
 
 const SwapPage = ({ selectedWallet, userAccount }) => {
-  const RPC_URL =
-    'https://polygon-mainnet.g.alchemy.com/v2/pmUZRjDjzs7tWIVU8AbhC4EHL7Im-WcO'
+  const RPC_URL = 'https://polygon-rpc.com/'
   const [fromToken, setFromToken] = useState('ROCK')
   const [balance, setBalance] = useState(0)
   const [goldBalance, setGoldBalance] = useState(0n)
@@ -191,7 +190,9 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
         Here you can exchange Rock tokens for Gold tokens at a ratio of 100 / 1
         and SWORD tokens for Gold tokens at a ratio of 1 / 100.
       </p>
-      <p className="swap-note">Note: 5% will be deducted as a buy tax.</p>
+      <p className="swap-note">
+        Note: 5% will be deducted as a buy tax. 95% are burned.
+      </p>
       <div className="swap-box">
         <div className="swap-section">
           <label htmlFor="from-token">From:</label>

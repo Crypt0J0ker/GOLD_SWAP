@@ -6,8 +6,7 @@ import GoldABI from '../abi/GoldABI.json'
 const GOLD_Address = '0x68Cd469503384EA977809d898eFae5423C78Dfa2'
 
 const AdminPage = ({ selectedWallet, userAccount }) => {
-  const RPC_URL =
-    'https://polygon-mainnet.g.alchemy.com/v2/pmUZRjDjzs7tWIVU8AbhC4EHL7Im-WcO'
+  const RPC_URL = 'https://polygon-rpc.com/'
   const [tokenAddress, setTokenAddress] = useState('')
   const [removeTokenAddress, setRemoveTokenAddress] = useState('')
   const [updateTokenAddress, setUpdateTokenAddress] = useState('')

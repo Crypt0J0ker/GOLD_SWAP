@@ -35,8 +35,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
     'function allowance(address owner, address spender) view returns (uint256)',
   ]
 
-  const RPC_URL =
-    'https://polygon-mainnet.g.alchemy.com/v2/pmUZRjDjzs7tWIVU8AbhC4EHL7Im-WcO'
+  const RPC_URL = 'https://polygon-rpc.com/'
   const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), [])
 
   const getSwordContract = async () => {
