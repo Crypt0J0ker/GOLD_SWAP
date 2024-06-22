@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useSyncProviders } from '../hooks/useSyncProviders'
+import { useSyncProviders } from '../hooks/useSyncProviders.js'
 import { formatAddress } from '~/utils'
 import styles from './WalletProviders.module.css'
+import config from './config/config.js'
 
 export const DiscoverWalletProviders = ({
   selectedWallet,
@@ -12,6 +13,7 @@ export const DiscoverWalletProviders = ({
 }) => {
   const providers = useSyncProviders()
   const [isConnected, setIsConnected] = useState(false)
+  const [chain, setChain] = useState('')
 
   const handleConnect = async providerWithInfo => {
     try {
@@ -19,36 +21,24 @@ export const DiscoverWalletProviders = ({
         method: 'eth_requestAccounts',
       })
 
-      const polygonChainId = '0x89'
+      const { polygon, sepolia } = config.networks
 
       const currentChainId = await providerWithInfo.provider.request({
         method: 'eth_chainId',
       })
 
-      if (currentChainId !== polygonChainId) {
+      const switchToChain = async chainConfig => {
         try {
           await providerWithInfo.provider.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: polygonChainId }],
+            params: [{ chainId: chainConfig.chainId }],
           })
         } catch (switchError) {
           if (switchError.code === 4902) {
             try {
               await providerWithInfo.provider.request({
                 method: 'wallet_addEthereumChain',
-                params: [
-                  {
-                    chainId: polygonChainId,
-                    chainName: 'Polygon Mainnet',
-                    nativeCurrency: {
-                      name: 'MATIC',
-                      symbol: 'MATIC',
-                      decimals: 18,
-                    },
-                    rpcUrls: ['https://polygon-rpc.com/'],
-                    blockExplorerUrls: ['https://polygonscan.com/'],
-                  },
-                ],
+                params: [chainConfig],
               })
             } catch (addError) {
               console.error(addError)
@@ -58,6 +48,19 @@ export const DiscoverWalletProviders = ({
           }
         }
       }
+
+      if (
+        currentChainId !== polygon.chainId &&
+        currentChainId !== sepolia.chainId
+      ) {
+        await switchToChain(sepolia)
+      }
+
+      const chainId = await providerWithInfo.provider.request({
+        method: 'eth_chainId',
+      })
+
+      setChain(chainId)
 
       setSelectedWallet(providerWithInfo)
       setUserAccount(accounts?.[0])
@@ -118,12 +121,22 @@ export const DiscoverWalletProviders = ({
             <div>No Announced Wallet Providers</div>
           )}
         </div>
-        {isConnected && (
+        {isConnected && chain === '0x89' && (
           <img
             className={styles.meta__icon}
             src="/polygon-matic-logo.svg"
             alt="matic"
           />
+        )}
+
+        {isConnected && chain === '0xaa36a7' && (
+          <>
+            <img
+              className={styles.meta__icon_sepolia}
+              src="/network_logo_dark.svg"
+              alt="sepolia"
+            />
+          </>
         )}
       </div>
     </header>

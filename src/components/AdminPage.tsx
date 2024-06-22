@@ -3,10 +3,34 @@ import { ethers } from 'ethers'
 import styles from './AdminPage.module.css'
 import GoldABI from '../abi/GoldABI.json'
 
-const GOLD_Address = '0x68Cd469503384EA977809d898eFae5423C78Dfa2'
+import config from './config/config.js'
 
-const AdminPage = ({ selectedWallet, userAccount }) => {
-  const RPC_URL = 'https://polygon-rpc.com/'
+interface Network {
+  chainId: string
+  chainName: string
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  rpcUrls: string[]
+  blockExplorerUrls: string[]
+  contracts: {
+    ROCK_ADDRESS: string
+    GOLD_ADDRESS: string
+    SWORD_ADDRESS: string
+  }
+}
+
+interface AdminPageProps {
+  selectedWallet: EIP6963ProviderDetail
+  userAccount: string
+}
+
+const AdminPage: React.FC<AdminPageProps> = ({
+  selectedWallet,
+  userAccount,
+}) => {
   const [tokenAddress, setTokenAddress] = useState('')
   const [removeTokenAddress, setRemoveTokenAddress] = useState('')
   const [updateTokenAddress, setUpdateTokenAddress] = useState('')
@@ -18,10 +42,36 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
   const [admin, setAdmin] = useState('')
   const [rate, setRate] = useState(0)
 
+  const getNetworkConfig = selectedWallet => {
+    if (!selectedWallet || !selectedWallet.info || !selectedWallet.provider)
+      return null
+
+    let chainId
+    try {
+      chainId =
+        selectedWallet.provider.chainId ||
+        selectedWallet.provider._network.chainId
+      console.log('chainId', chainId)
+    } catch (error) {
+      console.error('Error retrieving chainId:', error)
+      return null
+    }
+
+    const network: Network | undefined = (
+      Object.values(config.networks) as Network[]
+    ).find(network => network.chainId === chainId)
+
+    return network ? network : null
+  }
+
+  const networkConfig = getNetworkConfig(selectedWallet)
+  const RPC_URL = networkConfig ? networkConfig.rpcUrls[0] : null
+  const { GOLD_ADDRESS = '' } = networkConfig ? networkConfig.contracts : {}
+
   const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), [RPC_URL])
 
   const contract = useMemo(
-    () => new ethers.Contract(GOLD_Address, GoldABI, provider),
+    () => new ethers.Contract(GOLD_ADDRESS, GoldABI, provider),
     [provider]
   )
 
@@ -60,7 +110,7 @@ const AdminPage = ({ selectedWallet, userAccount }) => {
   const getSignerContract = async () => {
     const web3Provider = new ethers.BrowserProvider(selectedWallet.provider)
     const signer = await web3Provider.getSigner()
-    return new ethers.Contract(GOLD_Address, GoldABI, signer)
+    return new ethers.Contract(GOLD_ADDRESS, GoldABI, signer)
   }
 
   const handleAddWhitelistedToken = async () => {

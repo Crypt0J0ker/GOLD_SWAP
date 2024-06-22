@@ -2,14 +2,28 @@ import React, { useState, useEffect, useMemo } from 'react'
 import './SwapPage.css'
 import { ethers } from 'ethers'
 import { formatBalance } from '~/utils'
-import DollarRain from './DollarRain'
+import DollarRain from './DollarRain.js'
 
-const GOLD_Address = '0x68Cd469503384EA977809d898eFae5423C78Dfa2'
-const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
-const SWORD_Address = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
+import config from './config/config.js'
+
+interface Network {
+  chainId: string
+  chainName: string
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  rpcUrls: string[]
+  blockExplorerUrls: string[]
+  contracts: {
+    ROCK_ADDRESS: string
+    GOLD_ADDRESS: string
+    SWORD_ADDRESS: string
+  }
+}
 
 const SwapPage = ({ selectedWallet, userAccount }) => {
-  const RPC_URL = 'https://polygon-rpc.com/'
   const [fromToken, setFromToken] = useState('ROCK')
   const [balance, setBalance] = useState(0)
   const [goldBalance, setGoldBalance] = useState(0n)
@@ -18,28 +32,71 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
   const toToken = 'GOLD'
   const buyTax = 5 // 5% tax
 
+  const getNetworkConfig = selectedWallet => {
+    if (!selectedWallet || !selectedWallet.info || !selectedWallet.provider)
+      return null
+
+    let chainId
+    try {
+      chainId =
+        selectedWallet.provider.chainId ||
+        selectedWallet.provider._network.chainId
+      console.log('chainId', chainId)
+    } catch (error) {
+      console.error('Error retrieving chainId:', error)
+      return null
+    }
+
+    const network: Network | undefined = (
+      Object.values(config.networks) as Network[]
+    ).find(network => network.chainId === chainId)
+
+    return network ? network : null
+  }
+
+  const networkConfig = getNetworkConfig(selectedWallet)
+  const RPC_URL = networkConfig ? networkConfig.rpcUrls[0] : null
+  const {
+    GOLD_ADDRESS = '',
+    ROCK_ADDRESS = '',
+    SWORD_ADDRESS = '',
+  } = networkConfig ? networkConfig.contracts : {}
+
+  console.log('RPC_URL', RPC_URL)
+
   const [showConfetti, setShowConfetti] = useState(false)
 
-  const provider = useMemo(() => new ethers.JsonRpcProvider(RPC_URL), [RPC_URL])
+  const provider = useMemo(() => {
+    if (RPC_URL) {
+      return new ethers.JsonRpcProvider(RPC_URL)
+    } else {
+      console.error('RPC_URL is not available')
+      return null
+    }
+  }, [RPC_URL])
 
-  const GOLD_Contract = useMemo(
-    () =>
-      new ethers.Contract(
-        GOLD_Address,
+  const GOLD_Contract = useMemo(() => {
+    if (provider) {
+      return new ethers.Contract(
+        GOLD_ADDRESS,
         [
           'function burnAndMint(address token, uint256 amount)',
           'function whitelistedTokens(address) view returns (uint256, bool)',
         ],
         provider
-      ),
-    [provider]
-  )
+      )
+    } else {
+      return null
+    }
+  }, [provider])
 
   useEffect(() => {
+    if (!GOLD_Contract) return
+
     const fetchRate = async () => {
       try {
         const result = await GOLD_Contract.whitelistedTokens(
-          fromToken === 'ROCK' ? ROCK_Address : SWORD_Address
+          fromToken === 'ROCK' ? ROCK_ADDRESS : SWORD_ADDRESS
         )
         const rateValue = result[0].toString()
         setRate(rateValue)
@@ -49,15 +106,15 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
     }
 
     fetchRate()
-  }, [fromToken])
+  }, [fromToken, GOLD_Contract])
 
   useEffect(() => {
-    if (!userAccount) return
+    if (!userAccount || !provider) return
 
     const getUserTokenBalance = async () => {
       try {
         const contractAddress =
-          fromToken === 'ROCK' ? ROCK_Address : SWORD_Address
+          fromToken === 'ROCK' ? ROCK_ADDRESS : SWORD_ADDRESS
         const contract = new ethers.Contract(
           contractAddress,
           ['function balanceOf(address account) view returns (uint256)'],
@@ -73,7 +130,7 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
     const getUserGoldBalance = async () => {
       try {
         const contract = new ethers.Contract(
-          GOLD_Address,
+          GOLD_ADDRESS,
           ['function balanceOf(address account) view returns (uint256)'],
           provider
         )
@@ -96,7 +153,7 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
       const signer = await web3Provider.getSigner()
       const count = ethers.parseEther(amount.toString())
 
-      const tokenAddress = fromToken === 'ROCK' ? ROCK_Address : SWORD_Address
+      const tokenAddress = fromToken === 'ROCK' ? ROCK_ADDRESS : SWORD_ADDRESS
       const tokenContract = new ethers.Contract(
         tokenAddress,
         [
@@ -105,21 +162,22 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
         signer
       )
 
-      const approveTx = await tokenContract.approve(GOLD_Address, count)
+      const approveTx = await tokenContract.approve(GOLD_ADDRESS, count)
       await approveTx.wait()
       console.log('Approve transaction successful:', approveTx)
 
       const goldContract = new ethers.Contract(
-        GOLD_Address,
+        GOLD_ADDRESS,
         ['function burnAndMint(address token, uint256 amount)'],
         signer
       )
       const tx = await goldContract.burnAndMint(tokenAddress, count)
       await tx.wait()
+
       const getUserTokenBalance = async () => {
         try {
           const contractAddress =
-            fromToken === 'ROCK' ? ROCK_Address : SWORD_Address
+            fromToken === 'ROCK' ? ROCK_ADDRESS : SWORD_ADDRESS
           const contract = new ethers.Contract(
             contractAddress,
             ['function balanceOf(address account) view returns (uint256)'],
@@ -135,7 +193,7 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
       const getUserGoldBalance = async () => {
         try {
           const contract = new ethers.Contract(
-            GOLD_Address,
+            GOLD_ADDRESS,
             ['function balanceOf(address account) view returns (uint256)'],
             provider
           )
@@ -181,7 +239,7 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
   }
 
   const calculateConvertedAmount = amount => {
-    return (amount * rate * (100 - buyTax)) / 100000
+    return (amount * rate * (100 - buyTax)) / 10000
   }
 
   return (
@@ -237,9 +295,9 @@ const SwapPage = ({ selectedWallet, userAccount }) => {
           Swap
         </button>
       </div>
-      <p>GOLD: {GOLD_Address}</p>
-      <p>ROCK: {ROCK_Address}</p>
-      <p>SWORD: {SWORD_Address}</p>
+      <p>GOLD: {GOLD_ADDRESS}</p>
+      <p>ROCK: {ROCK_ADDRESS}</p>
+      <p>SWORD: {SWORD_ADDRESS}</p>
       {showConfetti && <DollarRain />}
     </div>
   )

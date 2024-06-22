@@ -64,6 +64,12 @@ header {
   margin-right: 100px;
 }
 
+.meta__icon_sepolia {
+  width: 5em;
+  padding-top: 10px;
+  margin-right: 60px;
+}
+
 .meta__subtitle {
   display: flex;
   flex-direction: row;

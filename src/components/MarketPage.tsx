@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { ethers } from 'ethers'
-import './SwapPage.css'
+import './MarketPage.css'
 import TokenABI from '../abi/TokenABI.json'
 import DollarRain from './DollarRain'
 
