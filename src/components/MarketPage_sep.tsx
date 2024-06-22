@@ -185,8 +185,12 @@ const MarketPage: React.FC<MarketPageProps> = ({
           Mint
         </button>
       </div>
-      <p>ROCK: {ROCK_ADDRESS}</p>
-      <p>SWORD: {SWORD_ADDRESS}</p>
+      {userAccount && (
+        <>
+          <p>ROCK: {ROCK_ADDRESS}</p>
+          <p>SWORD: {SWORD_ADDRESS}</p>
+        </>
+      )}
       {showConfetti && <DollarRain />}
     </div>
   )

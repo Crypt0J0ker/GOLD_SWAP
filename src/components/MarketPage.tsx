@@ -21,8 +21,8 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
   const STABLE_DECIMALS = 6
   const MATIC_DECIMALS = 18
 
-  const SWORD_Address = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
-  const ROCK_Address = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
+  const SWORD_ADDRESS = '0x0ad67d7DFAADC0df023A2248B67B73ff74521895'
+  const ROCK_ADDRESS = '0xc43D0432c876a8e7b428f0f65E863037BbA564aC'
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const tokenAddresses = {
@@ -41,21 +41,21 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
   const getSwordContract = async () => {
     const web3Provider = new ethers.BrowserProvider(selectedWallet.provider)
     const signer = await web3Provider.getSigner()
-    return new ethers.Contract(SWORD_Address, TokenABI, signer)
+    return new ethers.Contract(SWORD_ADDRESS, TokenABI, signer)
   }
 
   const getRockContract = async () => {
     const web3Provider = new ethers.BrowserProvider(selectedWallet.provider)
     const signer = await web3Provider.getSigner()
-    return new ethers.Contract(ROCK_Address, TokenABI, signer)
+    return new ethers.Contract(ROCK_ADDRESS, TokenABI, signer)
   }
 
   const swordRead = useMemo(
-    () => new ethers.Contract(SWORD_Address, TokenABI, provider),
+    () => new ethers.Contract(SWORD_ADDRESS, TokenABI, provider),
     [provider]
   )
   const rockRead = useMemo(
-    () => new ethers.Contract(ROCK_Address, TokenABI, provider),
+    () => new ethers.Contract(ROCK_ADDRESS, TokenABI, provider),
     [provider]
   )
 
@@ -156,7 +156,7 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
 
       if (fromToken === 'MATIC') {
         tx = await signer.sendTransaction({
-          to: toToken === 'SWORD' ? SWORD_Address : ROCK_Address,
+          to: toToken === 'SWORD' ? SWORD_ADDRESS : ROCK_ADDRESS,
           value: amountInWei.toString(),
         })
       } else {
@@ -254,8 +254,12 @@ const SwapPage: React.FC<SwapPageProps> = ({ selectedWallet, userAccount }) => {
           Ensure you have enough balance to complete the purchase.
         </p>
       </div>
-      <p>ROCK: {ROCK_Address}</p>
-      <p>SWORD: {SWORD_Address}</p>
+      {userAccount && (
+        <>
+          <p>ROCK: {ROCK_ADDRESS}</p>
+          <p>SWORD: {SWORD_ADDRESS}</p>
+        </>
+      )}
       {showConfetti && <DollarRain />}
     </div>
   )
