@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { DiscoverWalletProviders } from './components/WalletProviders'
 import SwapPage from './components/SwapPage'
 import AdminPage from './components/AdminPage'
+import AdminPageSep from './components/AdminPage_sep'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import MarketPage from './components/MarketPage'
 import MarketPageSep from './components/MarketPage_sep'
@@ -60,6 +61,9 @@ function App() {
   const MarketComponent =
     networkConfig?.chainName === 'Polygon Mainnet' ? MarketPage : MarketPageSep
 
+  const AdminComponent =
+    networkConfig?.chainName === 'Polygon Mainnet' ? AdminPage : AdminPageSep
+
   return (
     <Router>
       <div className="App">
@@ -91,7 +95,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <AdminPage
+              <AdminComponent
                 selectedWallet={selectedWallet}
                 userAccount={userAccount}
               />

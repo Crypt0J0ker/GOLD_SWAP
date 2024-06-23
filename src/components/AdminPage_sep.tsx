@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { ethers } from 'ethers'
-import styles from './AdminPage.module.css'
-import GoldABI from '../abi/GoldABI.json'
+import styles from './AdminPage_sep.module.css'
+import GoldABI from '../abi/GoldTestABI.json'
 
 import config from './config/config.js'
 
@@ -27,7 +27,7 @@ interface AdminPageProps {
   userAccount: string
 }
 
-const AdminPage: React.FC<AdminPageProps> = ({
+const AdminPageSep: React.FC<AdminPageProps> = ({
   selectedWallet,
   userAccount,
 }) => {
@@ -39,8 +39,9 @@ const AdminPage: React.FC<AdminPageProps> = ({
   const [buyTax, setBuyTax] = useState('')
   const [recoverTokenAddress, setRecoverTokenAddress] = useState('')
   const [recoverTokenAmount, setRecoverTokenAmount] = useState('')
-  const [admin, setAdmin] = useState('')
-  const [rate, setRate] = useState(0)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isOwner, setIsOwner] = useState(false)
+  const [tax, setTax] = useState(0)
 
   const getNetworkConfig = selectedWallet => {
     if (!selectedWallet || !selectedWallet.info || !selectedWallet.provider)
@@ -76,32 +77,45 @@ const AdminPage: React.FC<AdminPageProps> = ({
   )
 
   useEffect(() => {
-    const admin = async () => {
+    if (!userAccount || !selectedWallet) return
+    const checkRoles = async () => {
       try {
-        const result = await contract.owner()
-        setAdmin(result)
+        const owner = await contract.owner()
+        setIsOwner(owner.toLowerCase() === userAccount.toLowerCase())
+        console.log('userAccount', userAccount)
+        console.log('owner ', isOwner)
+        const adminRole =
+          '0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775'
+        const normalizedUserAccount = ethers.getAddress(userAccount)
+        const isAdminResult = await contract.hasRole(
+          adminRole,
+          normalizedUserAccount
+        )
+        setIsAdmin(isAdminResult)
+        console.log('admin ', isAdmin)
       } catch (error) {
-        console.error('Error getting admin:', error)
+        console.error('Error checking roles:', error)
       }
     }
+
     const handleUpdateBuyTax = async () => {
       try {
         const ratio = await contract.buyTax()
-        setRate(Number(ratio))
+        setTax(Number(ratio))
         console.log(ratio)
       } catch (error) {
         console.error('Error getting ratio:', error)
       }
     }
 
-    admin()
+    checkRoles()
     handleUpdateBuyTax()
   }, [selectedWallet, userAccount, contract])
 
   const handleUpdateBuyTax = async () => {
     try {
-      const rate = await contract.buyTax()
-      setRate(Number(rate))
+      const tax = await contract.buyTax()
+      setTax(Number(tax))
     } catch (error) {
       console.error('Error getting ratio:', error)
     }
@@ -158,12 +172,12 @@ const AdminPage: React.FC<AdminPageProps> = ({
       await tx.wait()
       setNewTokenRate('')
       setUpdateTokenAddress('')
-      alert('Token rate updated')
+      alert('Token tax updated')
     } catch (error) {
       setNewTokenRate('')
       setTokenAddress('')
       console.error(error)
-      alert('Failed to update token rate')
+      alert('Failed to update token tax')
     }
   }
 
@@ -272,7 +286,7 @@ const AdminPage: React.FC<AdminPageProps> = ({
         <div className={styles.section}>
           <div className={styles.tax}>
             <h2>Set Buy Tax</h2>
-            <p>Current tax: {rate}</p>
+            <p>Current tax: {tax}</p>
           </div>
           <div className={styles.inputGroup} style={{ marginBottom: '58px' }}>
             <input
@@ -288,7 +302,10 @@ const AdminPage: React.FC<AdminPageProps> = ({
         </div>
 
         <div className={styles.section}>
-          <h2>Recover ERC20 Tokens</h2>
+          <div className={styles.tax}>
+            <h2>Recover ERC20 Tokens</h2>
+            <p>Only Owner</p>
+          </div>
           <div className={styles.inputGroup}>
             <input
               type="text"
@@ -307,11 +324,11 @@ const AdminPage: React.FC<AdminPageProps> = ({
             Recover Tokens
           </button>
         </div>
-        {admin.toLowerCase() !== userAccount.toLowerCase() && (
+        {!isAdmin && (
           <div className={styles.attention}>
             <p>
               Attention: You will not be able to modify the smart contract
-              because you are not an owner!
+              because you are not an admin!
             </p>
           </div>
         )}
@@ -320,4 +337,4 @@ const AdminPage: React.FC<AdminPageProps> = ({
   )
 }
 
-export default AdminPage
+export default AdminPageSep
