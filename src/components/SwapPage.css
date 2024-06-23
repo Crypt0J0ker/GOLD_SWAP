@@ -84,17 +84,6 @@ p {
   margin-bottom: 15px !important;
 }
 
-.swap-title {
-  margin-top: 25px;
-  margin-right: 108px;
-
-  font-size: 50px;
-  font-weight: bold;
-  background: linear-gradient(to right, #ffd700, #ff4500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
 .rate {
   margin-left: 170px;
 }
